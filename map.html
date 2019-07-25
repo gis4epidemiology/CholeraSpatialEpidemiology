@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title> Spatial Epidemiology | Map </title>
+        <meta name="keywords" content="global, business, css templates, website templates, CSS, HTML" />
+        <meta name="description" content="Global - free CSS template provided by templatemo.com" />
+        <link rel="icon" href="static/images/favicon.png">
+        <link href="static/templatemo_style.css" rel="stylesheet" type="text/css" />
+        <link href="static/leaflet.css" rel="stylesheet" type="text/css" /> <!-- Leaflet 1.5.1 -->
+        <script src="static/leaflet.js"> </script> <!-- Leaflet 1.5.1 -->
+        <script src="static/layers.js"> </script>
+    </head>
+<body> 
+<br>
+<div id="templatemo_wrapper">
+  
+  <div id="templatemo_header">
+        <div id="templatemo_menu">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="background.html">Background</a></li>
+                <li><a href="gap.html">Gap</a></li>
+                <li><a href="objectives.html">Objectives</a></li>
+                <li><a href="results.html">Results</a></li>
+                <li><a href="map.html" class="current">Map</a></li>
+                <li><a href="downloads.html">Downloads</a></li>
+            </ul>
+        </div> <!-- end of templatemo_menu -->
+        
+        <div id="site_title">
+            <h1><a href="http://www.templatemo.com" target="_parent">Spatial <strong>Epidemiology</strong> <span> CHOLERA </span></a></h1>
+        </div> <!-- end of site_title -->  
+  </div> <!-- end of templatemo_header -->
+  
+  <div id="templatemo_main">
+      <div id="map" style="width:900px; height:420px;"> <div>
+      <div class="cleaner"></div>
+      vaasu
+  </div> <!-- end of templatemo_main -->
+
+</div>  <!-- end of templatemo_wrapper --> <br>
+
+<div id="templatemo_footer">
+    <div class="three_column">
+      <div class="button"><a href="javascript:;" onclick="map.fitBounds(LayerGroup.getBounds())">Zoom to Layers</a> </div>
+    </div>
+    <div class="three_column" style="color: white; width: 400px;">
+      Legend: Cholera Cases | Latrines | Water Sources
+    </div>
+
+    
+</div> <!-- end of templatemo_footer -->
+
+<script>
+
+var map = L.map('map');
+L.control.scale().addTo(map);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map);
+
+cases = L.geoJSON(cholera_cases, {
+           pointToLayer: function (feature, latlng) {
+              return L.circleMarker(latlng, {radius:3, color:"orange", fillColor:"orange"})
+           },
+           onEachFeature: function(feature, layer){
+              var content = ""
+              content += "<b>CaseId: </b>" + feature.properties.CaseID + "<br>";
+              content += "<b>Age: </b>" + feature.properties.Age + "<br>";
+              content += "<b>Sex: </b>" + feature.properties.Sex + "<br>";
+              content += "<b>DiarrhoeaY: </b>" + feature.properties.DiarrhoeaY + "<br>";
+              content += "<b>VomitingYN: </b>" + feature.properties.VomitingYN + "<br>";
+              content += "<b>NameOfColl: </b>" + feature.properties.NameOfColl + "<br>";
+              layer.bindPopup(content);
+           }
+        }).addTo(map);
+
+latrines = L.geoJSON(pit_latrines, {
+              pointToLayer: function (feature, latlng) {
+                 return L.circleMarker(latlng, {radius:3, color:"red", fillColor:"red"})
+              },
+              onEachFeature: function(feature, layer){
+                 var content = ""
+                 content += "<b>CaseID: </b>" + feature.properties.CaseID + "<br>";
+                 content += "<b>DropCover: </b>" + feature.properties.DropCover + "<br>";
+                 content += "<b>TypeofToil: </b>" + feature.properties.TypeofToil + "<br>";
+                 layer.bindPopup(content);
+              }
+           }).addTo(map);
+
+water_sources = L.geoJSON(unprotected_water_source, {
+                   pointToLayer: function (feature, latlng) {
+                      return L.circleMarker(latlng, {radius:3, color:"blue", fillColor:"blue"})
+                   },
+                   onEachFeature: function(feature, layer){
+                      var content = ""
+                      content += "<b>Name: </b>" + feature.properties.Name + "<br>";
+                      content += "<b>TotalHouse: </b>" + feature.properties.TotalHouse + "<br>";
+                      content += "<b>WaterSourc: </b>" + feature.properties.WaterSourc + "<br>";
+                      layer.bindPopup(content);
+                   }
+                }).addTo(map);
+
+LayerGroup = L.featureGroup([cases, latrines, water_sources])
+map.fitBounds(LayerGroup.getBounds())
+
+</script>
+
+</body>
+</html>
