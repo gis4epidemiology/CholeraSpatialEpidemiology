@@ -3,12 +3,16 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title> Spatial Epidemiology | Map </title>
-        <meta name="keywords" content="global, business, css templates, website templates, CSS, HTML" />
-        <meta name="description" content="Global - free CSS template provided by templatemo.com" />
+        <meta name="keywords" content="Cholera, GIS, Spatial, Leaflet" />
+        <meta name="description" content="Interactive Web GIS for Cholera Spatial Epidemiology" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <link rel="icon" href="static/images/favicon.png">
+        
         <link href="static/templatemo_style.css" rel="stylesheet" type="text/css" />
-        <link href="static/leaflet.css" rel="stylesheet" type="text/css" /> <!-- Leaflet 1.5.1 -->
-        <script src="static/leaflet.js"> </script> <!-- Leaflet 1.5.1 -->
+        
+        <link href="static/leaflet/leaflet.css" rel="stylesheet" type="text/css" /> <!-- Leaflet 1.5.1 -->
+        <script src="static/leaflet/leaflet.js"> </script> <!-- Leaflet 1.5.1 -->
+        
         <script src="static/layers.js"> </script>
     </head>
 <body> 
@@ -47,66 +51,75 @@
     </div>
     <div class="three_column" style="color: white; width: 400px;">
       Legend: Cholera Cases | Latrines | Water Sources
-    </div>
-
-    
+    </div>  
 </div> <!-- end of templatemo_footer -->
 
 <script>
-
-var map = L.map('map');
-L.control.scale().addTo(map);
-
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-}).addTo(map);
 
 cases = L.geoJSON(cholera_cases, {
            pointToLayer: function (feature, latlng) {
               return L.circleMarker(latlng, {radius:3, color:"orange", fillColor:"orange"})
            },
            onEachFeature: function(feature, layer){
-              var content = ""
-              content += "<b>CaseId: </b>" + feature.properties.CaseID + "<br>";
-              content += "<b>Age: </b>" + feature.properties.Age + "<br>";
-              content += "<b>Sex: </b>" + feature.properties.Sex + "<br>";
-              content += "<b>DiarrhoeaY: </b>" + feature.properties.DiarrhoeaY + "<br>";
-              content += "<b>VomitingYN: </b>" + feature.properties.VomitingYN + "<br>";
-              content += "<b>NameOfColl: </b>" + feature.properties.NameOfColl + "<br>";
+              fields = ["CaseId", "Age", "Sex", "DiarrhoeaY", "VomitingYN", "NameOfColl"];
+              content = "";
+              fields.forEach(function(item, index){
+                  content += "<b>" + item + "</b>: "+ feature.properties[item] + "<br>";
+              })
               layer.bindPopup(content);
+              layer.on('mouseover', function(f) { layer.openPopup() });
+              layer.on('mouseout', function(f) { layer.closePopup() });
            }
-        }).addTo(map);
+        })
 
 latrines = L.geoJSON(pit_latrines, {
               pointToLayer: function (feature, latlng) {
                  return L.circleMarker(latlng, {radius:3, color:"red", fillColor:"red"})
               },
               onEachFeature: function(feature, layer){
-                 var content = ""
-                 content += "<b>CaseID: </b>" + feature.properties.CaseID + "<br>";
-                 content += "<b>DropCover: </b>" + feature.properties.DropCover + "<br>";
-                 content += "<b>TypeofToil: </b>" + feature.properties.TypeofToil + "<br>";
+                 fields = ["CaseID", "DropCover", "TypeofToil"];
+                 content = "";
+                 fields.forEach(function(item, index){
+                     content += "<b>" + item + "</b>: "+ feature.properties[item] + "<br>";
+                 });
                  layer.bindPopup(content);
+                 layer.on('mouseover', function(f) { layer.openPopup() });
+                 layer.on('mouseout', function(f) { layer.closePopup() });
               }
-           }).addTo(map);
+           })
 
 water_sources = L.geoJSON(unprotected_water_source, {
                    pointToLayer: function (feature, latlng) {
                       return L.circleMarker(latlng, {radius:3, color:"blue", fillColor:"blue"})
                    },
                    onEachFeature: function(feature, layer){
-                      var content = ""
-                      content += "<b>Name: </b>" + feature.properties.Name + "<br>";
-                      content += "<b>TotalHouse: </b>" + feature.properties.TotalHouse + "<br>";
-                      content += "<b>WaterSourc: </b>" + feature.properties.WaterSourc + "<br>";
+                      fields = ["Name", "TotalHouse", "WaterSourc"];
+                      content = "";
+                      fields.forEach(function(item, index){
+                          content += "<b>" + item + "</b>: "+ feature.properties[item] + "<br>";
+                      });
                       layer.bindPopup(content);
+                      layer.on('mouseover', function(f) { layer.openPopup() });
+                      layer.on('mouseout', function(f) { layer.closePopup() });
                    }
-                }).addTo(map);
+                })
 
-LayerGroup = L.featureGroup([cases, latrines, water_sources])
-map.fitBounds(LayerGroup.getBounds())
+LayerGroup = L.featureGroup([cases, latrines, water_sources]);
+
+var map = L.map('map', {layers: LayerGroup});
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map);
+
+
+map.fitBounds(LayerGroup.getBounds());
+L.control.scale().addTo(map);
+
+L.control.layers({}, {"cases": cases,
+                      "latrines": latrines,
+                      "water_sources": water_sources}).addTo(map);
 
 </script>
-
 </body>
 </html>
