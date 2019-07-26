@@ -13,7 +13,11 @@
         <link href="static/leaflet/leaflet.css" rel="stylesheet" type="text/css" /> <!-- Leaflet 1.5.1 -->
         <script src="static/leaflet/leaflet.js"> </script> <!-- Leaflet 1.5.1 -->
         
+        <link href="static/leaflet/leaflet-measure.css" rel="stylesheet" type="text/css" /> <!-- Leaflet 1.5.1 -->
+        <script src="static/leaflet/leaflet-measure.js"> </script> <!-- Leaflet 1.5.1 -->
+        
         <script src="static/layers.js"> </script>
+
     </head>
 <body> 
 <br>
@@ -34,13 +38,12 @@
         
         <div id="site_title">
             <h1><a href="http://www.templatemo.com" target="_parent">Spatial <strong>Epidemiology</strong> <span> CHOLERA </span></a></h1>
-        </div> <!-- end of site_title -->  
+        </div> <!-- end of site_title -->
   </div> <!-- end of templatemo_header -->
   
   <div id="templatemo_main">
       <div id="map" style="width:900px; height:420px;"> <div>
       <div class="cleaner"></div>
-      vaasu
   </div> <!-- end of templatemo_main -->
 
 </div>  <!-- end of templatemo_wrapper --> <br>
@@ -56,9 +59,31 @@
 
 <script>
 
+var choleraCaseIcon = L.icon({
+    iconUrl: 'static/images/icon_cholera_case.png',
+    iconSize: [20, 20],
+    iconAnchor: [16, 37],
+    popupAnchor: [0, -28]
+  });
+
+var latrineIcon = L.icon({
+    iconUrl: 'static/images/icon_latrine.png',
+    iconSize: [20, 20],
+    iconAnchor: [16, 37],
+    popupAnchor: [0, -28]
+  });
+
+var waterSourceIcon = L.icon({
+    iconUrl: 'static/images/icon_water_source.png',
+    iconSize: [20, 20],
+    iconAnchor: [16, 37],
+    popupAnchor: [0, -28]
+  });
+
+
 cases = L.geoJSON(cholera_cases, {
            pointToLayer: function (feature, latlng) {
-              return L.circleMarker(latlng, {radius:3, color:"orange", fillColor:"orange"})
+              return L.marker(latlng, {icon: choleraCaseIcon});
            },
            onEachFeature: function(feature, layer){
               fields = ["CaseId", "Age", "Sex", "DiarrhoeaY", "VomitingYN", "NameOfColl"];
@@ -74,7 +99,7 @@ cases = L.geoJSON(cholera_cases, {
 
 latrines = L.geoJSON(pit_latrines, {
               pointToLayer: function (feature, latlng) {
-                 return L.circleMarker(latlng, {radius:3, color:"red", fillColor:"red"})
+                 return L.marker(latlng, {icon: latrineIcon});
               },
               onEachFeature: function(feature, layer){
                  fields = ["CaseID", "DropCover", "TypeofToil"];
@@ -90,7 +115,7 @@ latrines = L.geoJSON(pit_latrines, {
 
 water_sources = L.geoJSON(unprotected_water_source, {
                    pointToLayer: function (feature, latlng) {
-                      return L.circleMarker(latlng, {radius:3, color:"blue", fillColor:"blue"})
+                      return L.marker(latlng, {icon: waterSourceIcon});
                    },
                    onEachFeature: function(feature, layer){
                       fields = ["Name", "TotalHouse", "WaterSourc"];
@@ -119,6 +144,13 @@ L.control.scale().addTo(map);
 L.control.layers({}, {"cases": cases,
                       "latrines": latrines,
                       "water_sources": water_sources}).addTo(map);
+
+var measureControl = L.control.measure({position: 'topleft',
+                                        primaryLengthUnit: 'feet',
+                                        secondaryLengthUnit: 'meters',
+                                        activeColor: 'red',
+                                        completedColor: 'red'});
+measureControl.addTo(map);
 
 </script>
 </body>
