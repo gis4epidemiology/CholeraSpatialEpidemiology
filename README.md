@@ -11,3 +11,5 @@
 * SHP files were reprojected from <b>EPSG:32736</b> to <b>EPSG:4326</b> as GeoJSON files using [GeoPandas](http://geopandas.org/)
 
 * [Leaflet-Measure](https://github.com/ljagis/leaflet-measure) plugin is used for measuring distances
+
+* [Leaflet-EasyButton](https://github.com/CliffCloud/Leaflet.EasyButton) plugin is used for default home button

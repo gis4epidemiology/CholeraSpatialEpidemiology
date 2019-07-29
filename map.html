@@ -13,15 +13,31 @@
         <link href="static/leaflet/leaflet.css" rel="stylesheet" type="text/css" /> <!-- Leaflet 1.5.1 -->
         <script src="static/leaflet/leaflet.js"> </script> <!-- Leaflet 1.5.1 -->
         
-        <link href="static/leaflet/leaflet-measure.css" rel="stylesheet" type="text/css" /> <!-- Leaflet 1.5.1 -->
-        <script src="static/leaflet/leaflet-measure.js"> </script> <!-- Leaflet 1.5.1 -->
+        <link href="static/leaflet/leaflet-measure.css" rel="stylesheet" type="text/css" />
+        <script src="static/leaflet/leaflet-measure.js"> </script>
+        
+        <link href="static/leaflet/easy-button.css" rel="stylesheet" type="text/css" />
+        <script src="static/leaflet/easy-button.js"> </script>
         
         <script src="static/layers.js"> </script>
-
+        
+        <style>
+          .legend {
+            background: #F0F0F0;
+            border-radius: 5px;
+            width: 140px;
+            padding: 10px;
+            line-height: 18px;
+            color: black;
+         }
+        </style>
     </head>
 <body> 
 <br>
 <div id="templatemo_wrapper">
+  <center>
+    <h5> Interactive Web GIS for Cholera Spatial Epidemiology: Case of 2017-2018 Cholera Outbreak in Karonga district: MALAWI </h5>
+  </center>
   
   <div id="templatemo_header">
         <div id="templatemo_menu">
@@ -37,25 +53,16 @@
         </div> <!-- end of templatemo_menu -->
         
         <div id="site_title">
-            <h1><a href="http://www.templatemo.com" target="_parent">Spatial <strong>Epidemiology</strong> <span> CHOLERA </span></a></h1>
+            <h1><a href="#" target="_parent">Spatial <strong>Epidemiology</strong> <span> CHOLERA </span></a></h1>
         </div> <!-- end of site_title -->
   </div> <!-- end of templatemo_header -->
   
   <div id="templatemo_main">
-      <div id="map" style="width:900px; height:420px;"> <div>
-      <div class="cleaner"></div>
+      <div id="map" style="width:900px; height:450px;"> </div>
+      <div class="cleaner"> </div>
   </div> <!-- end of templatemo_main -->
 
 </div>  <!-- end of templatemo_wrapper --> <br>
-
-<div id="templatemo_footer">
-    <div class="three_column">
-      <div class="button"><a href="javascript:;" onclick="map.fitBounds(LayerGroup.getBounds())">Zoom to Layers</a> </div>
-    </div>
-    <div class="three_column" style="color: white; width: 400px;">
-      Legend: Cholera Cases | Latrines | Water Sources
-    </div>  
-</div> <!-- end of templatemo_footer -->
 
 <script>
 
@@ -130,27 +137,46 @@ water_sources = L.geoJSON(unprotected_water_source, {
                 })
 
 LayerGroup = L.featureGroup([cases, latrines, water_sources]);
-
 var map = L.map('map', {layers: LayerGroup});
+map.fitBounds(LayerGroup.getBounds());
 
+// Open Streetmap
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
-
-map.fitBounds(LayerGroup.getBounds());
+// Scale Bar
 L.control.scale().addTo(map);
 
-L.control.layers({}, {"cases": cases,
-                      "latrines": latrines,
+// Layers
+L.control.layers({}, {"cholera_cases": cases,
+                      "pit_latrines": latrines,
                       "water_sources": water_sources}).addTo(map);
 
-var measureControl = L.control.measure({position: 'topleft',
-                                        primaryLengthUnit: 'feet',
-                                        secondaryLengthUnit: 'meters',
-                                        activeColor: 'red',
-                                        completedColor: 'red'});
-measureControl.addTo(map);
+// Measurement functionality
+L.control.measure({position: 'topleft',
+                   primaryLengthUnit: 'feet',
+                   secondaryLengthUnit: 'meters',
+                   activeColor: 'red',
+                   completedColor: 'red'}).addTo(map);
+
+// Zoom to Extent button
+L.easyButton('<span style="font-size:1.5em">&curren;</span>',
+             function() {
+                map.fitBounds(LayerGroup.getBounds());
+             }, "Zoom to Extent").addTo(map);
+
+// Legend             
+var legend = L.control({position: "bottomright"});
+legend.onAdd = function(){
+    this.mydiv = L.DomUtil.create('div', 'info legend');
+    this.mydiv.innerHTML += '<b>Legend</b><br><br>'
+    this.mydiv.innerHTML += '<img src="static/images/icon_cholera_case.png" width=20 height=20> Cholera Cases (219)<br>';
+    this.mydiv.innerHTML += '<img src="static/images/icon_latrine.png" width=20 height=20> Pit Latrines (167)<br>';
+    this.mydiv.innerHTML += '<img src="static/images/icon_water_source.png" width=20 height=20> Water Sources (59)<br>';
+    return this.mydiv;
+};
+legend.addTo(map);
 
 </script>
 </body>
