@@ -32,7 +32,7 @@
          }
         </style>
     </head>
-<body> 
+<body>
 <br>
 <div id="templatemo_wrapper">
   <center>
@@ -93,14 +93,20 @@ cases = L.geoJSON(cholera_cases, {
               return L.marker(latlng, {icon: choleraCaseIcon});
            },
            onEachFeature: function(feature, layer){
-              fields = ["CaseId", "Age", "Sex", "DiarrhoeaY", "VomitingYN", "NameOfColl"];
-              content = "";
+              fields = ["CaseId", "Age", "Sex", "Functional", "DiarrhoeaY",
+                        "CreationDa", "Creator", "EditDate", "Editor",
+                        "NameOfColl", "DateofOnse", "DateSeenAt", "Durationof", 
+                        "FeverYN", "AbdominalP", "DiarrhoeaY", "VomitingYN", 
+                        "HeadacheYN", "LossofAppe", "GeneralBod", "OtherSigns",
+                        "OBJECTID", "DHO_ID"];
+              content = "<div style='overflow-y: auto; height: 120px; width: 200px'>";
               fields.forEach(function(item, index){
                   content += "<b>" + item + "</b>: "+ feature.properties[item] + "<br>";
               })
+              content += "</div>"
               layer.bindPopup(content);
               layer.on('mouseover', function(f) { layer.openPopup() });
-              layer.on('mouseout', function(f) { layer.closePopup() });
+              // layer.on('mouseout', function(f) { layer.closePopup() });
            }
         })
 
@@ -109,14 +115,17 @@ latrines = L.geoJSON(pit_latrines, {
                  return L.marker(latlng, {icon: latrineIcon});
               },
               onEachFeature: function(feature, layer){
-                 fields = ["CaseID", "DropCover", "TypeofToil"];
-                 content = "";
+                 fields = ["TypeOfToil", "CreationDa", "Creator",
+                           "EditDate", "Editor", "CaseID", "Households",
+                           "HandWashin", "HandWash_1", "SoapAvaila", "DropCover"];
+                 content = "<div style='overflow-y: auto; height: 120px; width: 200px'>";
                  fields.forEach(function(item, index){
                      content += "<b>" + item + "</b>: "+ feature.properties[item] + "<br>";
                  });
+                 content += "</div>"
                  layer.bindPopup(content);
                  layer.on('mouseover', function(f) { layer.openPopup() });
-                 layer.on('mouseout', function(f) { layer.closePopup() });
+                 // layer.on('mouseout', function(f) { layer.closePopup() });
               }
            })
 
@@ -125,14 +134,17 @@ water_sources = L.geoJSON(unprotected_water_source, {
                       return L.marker(latlng, {icon: waterSourceIcon});
                    },
                    onEachFeature: function(feature, layer){
-                      fields = ["Name", "TotalHouse", "WaterSourc"];
-                      content = "";
+                      fields = ["Name", "TotalHouse", "WaterSourc",
+                                "NumberOfPe", "OtherComme", "CreationDa",
+                                "Creator", "EditDate", "Editor", "CholeraCas"];
+                      content = "<div style='overflow-y: auto; height: 120px; width: 200px'>";
                       fields.forEach(function(item, index){
                           content += "<b>" + item + "</b>: "+ feature.properties[item] + "<br>";
                       });
+                      content += "</div>"
                       layer.bindPopup(content);
                       layer.on('mouseover', function(f) { layer.openPopup() });
-                      layer.on('mouseout', function(f) { layer.closePopup() });
+                      // layer.on('mouseout', function(f) { layer.closePopup() });
                    }
                 })
 
