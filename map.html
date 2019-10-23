@@ -152,18 +152,22 @@ LayerGroup = L.featureGroup([cases, latrines, water_sources]);
 var map = L.map('map', {layers: LayerGroup});
 map.fitBounds(LayerGroup.getBounds());
 
+
 // Open Streetmap
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
+
 // Scale Bar
 L.control.scale().addTo(map);
+
 
 // Layers
 L.control.layers({}, {"cholera_cases": cases,
                       "pit_latrines": latrines,
                       "water_sources": water_sources}).addTo(map);
+
 
 // Measurement functionality
 L.control.measure({position: 'topleft',
@@ -172,11 +176,13 @@ L.control.measure({position: 'topleft',
                    activeColor: 'red',
                    completedColor: 'red'}).addTo(map);
 
+
 // Zoom to Extent button
 L.easyButton('<span style="font-size:1.5em">&curren;</span>',
              function() {
                 map.fitBounds(LayerGroup.getBounds());
              }, "Zoom to Extent").addTo(map);
+
 
 // Legend             
 var legend = L.control({position: "bottomright"});
@@ -189,6 +195,26 @@ legend.onAdd = function(){
     return this.mydiv;
 };
 legend.addTo(map);
+
+
+// Hide features if its zoomed more
+map.on('zoomend', function() {
+    var zoomlevel = map.getZoom();
+    if (zoomlevel > 16) {
+        if (map.hasLayer(cases)) {
+            map.removeLayer(cases);
+            map.removeLayer(latrines);
+            map.removeLayer(water_sources);
+        }
+    }
+    else {
+        if (!map.hasLayer(cases)) {
+            map.addLayer(cases);
+            map.addLayer(latrines);
+            map.addLayer(water_sources);
+        }
+    }
+});
 
 </script>
 </body>
